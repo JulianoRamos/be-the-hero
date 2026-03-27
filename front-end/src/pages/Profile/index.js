@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiPower, FiTrash2 } from 'react-icons/fi';
 
@@ -26,7 +26,7 @@ export default function Profile() {
         });
     }, [ongId]);
 
-    async function handleDeleteIncident(id) {
+    const handleDeleteIncident = useCallback(async (id) => {
         try {
             await api.delete(`incidents/${id}`, {
                 headers: {
@@ -34,11 +34,11 @@ export default function Profile() {
                 }
             });
 
-            setIncidents(incidents.filter(incident => incident.id !== id));
+            setIncidents(currentIncidents => currentIncidents.filter(incident => incident.id !== id));
         } catch (error) {
             alert('Erro ao deletar caso, tente novamente.');
         }
-    }
+    }, [ongId]);
 
     async function handlerLogout() {
         localStorage.clear();
@@ -61,7 +61,7 @@ export default function Profile() {
 
             <ul>
                 {incidents.map(incident => (
-                    <li key={incidents.id}>
+                    <li key={incident.id}>
                         <strong>CASO:</strong>
                         <p>{incident.title}</p>
 
