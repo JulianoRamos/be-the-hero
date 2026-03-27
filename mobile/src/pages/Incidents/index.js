@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { View, FlatList, Image, Text, TouchableOpacity } from 'react-native';
@@ -17,9 +17,9 @@ export default function Incidents() {
 
     const navigation = useNavigation();
 
-    function navigateToDetail(incident) {
+    const navigateToDetail = useCallback((incident) => {
         navigation.navigate('Detail', { incident });
-    }
+    }, [navigation]);
 
     async function loadIncidents() {
         if (loading) {
@@ -36,7 +36,7 @@ export default function Incidents() {
             params: { page }
         });
 
-        setIncidents([...incidents, ...response.data]);
+        setIncidents(prev => [...prev, ...response.data]);
         setTotal(response.headers['x-total-count']);
         setPage(page + 1);
         setLoading(false);
